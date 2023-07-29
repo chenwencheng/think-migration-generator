@@ -6,7 +6,7 @@
 
 ## 安装
 ```sh
-composer require jaguarjack/migration-generator:dev-master
+composer require composer require weifashi/think-migration-generator:dev-master
 ```
 
 ## 平台支持
