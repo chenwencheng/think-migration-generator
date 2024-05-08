@@ -2,7 +2,7 @@
 
 namespace JaguarJack\MigrateGenerator\Migration\Columns\Thinkphp;
 
-class DatetimeType extends AbstractType
+class DateTimeType extends AbstractType
 {
     public function migrateColumn():string
     {
