@@ -1,5 +1,5 @@
 {
-    "name": "weifashi/think-migration-generator",
+    "name": "qf/think-migration-generator",
     "description": "generator migration files if you never use it",
     "type": "library",
     "license": "MIT",
@@ -11,8 +11,8 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=8.0",
-        "doctrine/dbal": "3.0"
+        "php": ">7.4",
+        "doctrine/dbal": "2.13.9"
     },
     "autoload": {
         "psr-4": {
