@@ -56,7 +56,8 @@ class ThinkPHPCommand extends Command
             }
 
             foreach ($tables as $key => $table) {
-                file_put_contents($migrationsPath  . ($key + 1) . date('YmdHis') . '_' . $table->getName() . '.php', $migrateGenerator->getMigrationContent($table));
+                $migrationFilePath = $this->formatMigrationFilePath($migrationsPath, $table->getName(), $key + 1);
+                file_put_contents($migrationFilePath, $migrateGenerator->getMigrationContent($table));
 
                 $output->info(sprintf('%s table migration file generated', $table->getName()));
             }
@@ -72,10 +73,23 @@ class ThinkPHPCommand extends Command
         foreach ($tables as $key => $table) {
             $tableForeign = (new ThinkphpMigrationForeignKeys())->setTable($table);
             if ($tableForeign->hasForeignKeys()) {
-                file_put_contents($migrationsPath . ($key + 1) * 100 . date('YmdHis') . '_' . $table->getName() . '_foreign_keys.php',
-                    $tableForeign->output());
+                $migrationFilePath = $this->formatMigrationFilePath($migrationsPath, $table->getName(), $key + 1, true);
+                file_put_contents($migrationFilePath, $tableForeign->output());
             }
         }
+    }
+
+    protected function formatMigrationFilePath($migrationsPath, $tableName, $key, $hasForeignKeys = false)
+    {
+        $connection = config('database.default');
+        $config = config('database.connections.' . $connection);
+        $prefix = isset($config['prefix']) ? $config['prefix'] : '';
+        $formatTableName = str_replace($prefix, '', $tableName);
+
+        $filePath = $migrationsPath . date('YmdHis') . $key . mt_rand(100, 999) . '_create_' . $formatTableName . '_table';
+        $filePath = $hasForeignKeys ? "{$filePath}_foreign_keys.php" : "{$filePath}.php";
+
+        return $filePath;
     }
 }
 

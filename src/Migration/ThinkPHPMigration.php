@@ -24,14 +24,18 @@ class ThinkPHPMigration extends AbstractMigration
     protected function getReplaceContent(): array
     {
         $this->removeAutoincrementColumn();
+        $connection = config('database.default');
+        $config = config('database.connections.' . $connection);
+        $prefix = isset($config['prefix']) ? $config['prefix'] : '';
+        $tableName = str_replace($prefix, '', $this->table['name']);
+        $tableInformation = sprintf("['engine' => '%s', 'comment' => '%s' %s %s]", $this->table['engine'], $this->table['comment'], $this->getIndexParse()->getAutoIncrement(), $this->getIndexParse()->getPrimaryKeys());
 
         return [
-            ucfirst(Str::camel($this->table['name'])),
+            'Create' . ucfirst(Str::camel($tableName)) . 'Table',
             // table name
-            $this->table['name'],
+            $tableName,
             // phinx table information
-            sprintf("['engine' => '%s', 'collation' => '%s', 'comment' => '%s' %s %s]",
-                $this->table['engine'], $this->table['collation'], $this->table['comment'], $this->getIndexParse()->getAutoIncrement(), $this->getIndexParse()->getPrimaryKeys()),
+            $tableInformation,
 
            '$table' . rtrim($this->getMigrationContent(), $this->eof())
         ];
